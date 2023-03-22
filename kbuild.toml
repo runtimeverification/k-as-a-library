@@ -1,0 +1,14 @@
+[project]
+name = "k-pldi-tutorial"
+version = "0.1.0"
+source = "k-src"
+
+[targets.llvm]
+backend = "llvm"
+main-file = "imp-pldi.md"
+syntax-module = "IMP-PLDI-SYNTAX"
+
+[targets.haskell]
+backend = "haskell"
+main-file = "imp-pldi.md"
+syntax-module = "IMP-PLDI-SYNTAX"
