@@ -12,6 +12,9 @@ clean:
 	rm -rf dist .mypy_cache
 	find -type d -name __pycache__ -prune -exec rm -rf {} \;
 
+distclean: clean
+	rm -rf .build
+
 build:
 	poetry build
 
@@ -65,4 +68,9 @@ check-black: poetry-install
 
 kbuild-%:
 	$(POETRY_RUN) kbuild kompile $*
+
+install: kbuild-arithmetic
+	mkdir -p .build/lib
+	cp $(shell $(POETRY_RUN) kbuild which arithmetic)/lib* .build/lib
+
 .PHONY: kbuild-*

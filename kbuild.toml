@@ -3,7 +3,7 @@ name = "k-as-a-library"
 version = "0.1.0"
 source = "k-src"
 
-[targets.llvm]
+[targets.arithmetic]
 backend = "llvm"
 main-file = "arithmetic.k"
 llvm-kompile-type = "c"
