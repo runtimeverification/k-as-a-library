@@ -1,14 +1,12 @@
 [project]
-name = "k-pldi-tutorial"
+name = "k-as-a-library"
 version = "0.1.0"
 source = "k-src"
 
 [targets.llvm]
 backend = "llvm"
-main-file = "imp-pldi.md"
-syntax-module = "IMP-PLDI-SYNTAX"
-
-[targets.haskell]
-backend = "haskell"
-main-file = "imp-pldi.md"
-syntax-module = "IMP-PLDI-SYNTAX"
+main-file = "arithmetic.k"
+llvm-kompile-type = "c"
+llvm-kompile-output = "libarithmetic"
+gen-bison-parser = true
+bison-parser-library = true
