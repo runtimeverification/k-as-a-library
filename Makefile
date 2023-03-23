@@ -4,6 +4,8 @@
         format isort autoflake black    \
         check check-isort check-autoflake check-black check-flake8 check-mypy
 
+POETRY_RUN := poetry run
+
 default: check test-unit
 
 all: check test
@@ -13,6 +15,7 @@ clean:
 	find -type d -name __pycache__ -prune -exec rm -rf {} \;
 
 distclean: clean
+	$(POETRY_RUN) kbuild clean
 	rm -rf .build
 
 build:
@@ -20,8 +23,6 @@ build:
 
 poetry-install:
 	poetry install
-
-POETRY_RUN := poetry run
 
 
 # Tests
