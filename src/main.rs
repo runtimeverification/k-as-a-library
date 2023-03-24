@@ -1,41 +1,29 @@
+#![allow(non_upper_case_globals)]
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
+
 use clap::Parser;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 use std::path::{Path, PathBuf};
+
+include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 fn get_owned_string(ptr: *const c_char) -> String {
     let cstr = unsafe { CStr::from_ptr(ptr) };
     String::from_utf8_lossy(cstr.to_bytes()).to_string()
 }
 
-#[repr(C)]
-pub struct KorePatternHandle {
-    _data: [u8; 0],
-    _marker: core::marker::PhantomData<(*mut u8, core::marker::PhantomPinned)>,
-}
-
-#[repr(C)]
-pub struct KoreSortHandle {
-    _data: [u8; 0],
-    _marker: core::marker::PhantomData<(*mut u8, core::marker::PhantomPinned)>,
-}
-
-#[repr(C)]
-pub struct BlockHandle {
-    _data: [u8; 0],
-    _marker: core::marker::PhantomData<(*mut u8, core::marker::PhantomPinned)>,
-}
-
 pub struct KorePattern {
-    _handle: *mut KorePatternHandle,
+    _handle: *mut kore_pattern,
 }
 
 pub struct KoreSort {
-    _handle: *mut KoreSortHandle,
+    _handle: *mut kore_sort,
 }
 
 pub struct Block {
-    _handle: *mut BlockHandle,
+    _handle: *mut block,
 }
 
 impl KorePattern {
@@ -80,7 +68,7 @@ impl KoreSort {
 }
 
 impl Block {
-    fn new(handle: *mut BlockHandle) -> Self {
+    fn new(handle: *mut block) -> Self {
         Self { _handle: handle }
     }
 
@@ -103,27 +91,6 @@ impl Block {
     }
 }
 
-extern "C" {
-    fn parse_Exp(input: *const c_char, location: *const c_char) -> *const c_char;
-
-    fn kore_composite_sort_new(sort: *const c_char) -> *mut KoreSortHandle;
-
-    fn kore_pattern_parse(kore: *const c_char) -> *mut KorePatternHandle;
-
-    fn kore_pattern_dump(pat: *const KorePatternHandle) -> *const c_char;
-
-    fn kore_pattern_make_interpreter_input(
-        pat: *const KorePatternHandle,
-        sort: *const KoreSortHandle,
-    ) -> *mut KorePatternHandle;
-
-    fn kore_pattern_construct(pat: *const KorePatternHandle) -> *mut BlockHandle;
-
-    fn take_steps(depth: i64, term: *mut BlockHandle) -> *mut BlockHandle;
-
-    fn kore_block_dump(term: *const BlockHandle) -> *const c_char;
-}
-
 #[derive(Parser)]
 struct Cli {
     input_file: PathBuf,
@@ -131,7 +98,6 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-
     let sort_exp = KoreSort::new("SortExp");
     let pat = KorePattern::load_pretty(&args.input_file).make_interpreter_input(&sort_exp);
     let mut block = pat.construct();
